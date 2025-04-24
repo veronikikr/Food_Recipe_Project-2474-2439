@@ -1,21 +1,21 @@
-/* Γενικά στυλ για το σώμα της σελίδας */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.searchBar{
+/* Search Bar */
+.searchBar {
   display: flex;
   justify-content: center;
   gap: 7px;
   margin-top: 22px;
 }
 
-.searchBar input{
+.searchBar input {
   width: 400px;
   padding: 9px;
   font-size: 22px;
@@ -24,23 +24,89 @@ body {
   border-radius: 6px;
 }
 
-.searchBar button{
-  width: 90px;
-  background-color: orange;
+.searchBar {
+  button {
+    width: 90px;
+    background-color: orange;
+    color: white;
+    border: none;
+    font-size: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .home-button {
+    background-color: #0077cc;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+  }
+  
+}
+
+
+
+/* Meals Container (κάθε κάρτα είναι εδώ μέσα) */
+.meals-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  margin: 40px auto;
+  width: 60%;
+}
+
+/* Κάθε κάρτα */
+.meal-card {
+  background-color: #f8f8f8;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meal-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Εικόνα Φαγητού */
+.meal-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+/* Όνομα Φαγητού */
+.meal-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
+  color: #333;
+}
+
+/* Κουμπί "Recipe" */
+.recipe-btn {
+  background-color: #f4a100;
   color: white;
+  padding: 8px 16px;
+  font-size: 15px;
   border: none;
-  font-size: 20px;
-  border-radius: 6px;
+  border-radius: 25px;
   cursor: pointer;
+  margin-top: 12px;
   transition: background-color 0.3s ease;
 }
 
-.searchBar button:hover {
-  background-color: #ff8c1a;
-}
-
-/* Στυλ για το κουμπί Home */
-.home-button {
+.home-button2 {
   background-color: #0077cc;
   color: white;
   padding: 10px 20px;
@@ -52,66 +118,32 @@ body {
   margin-top: 20px;
 }
 
-.home-button:hover {
-  background-color: #005fa3;
-}
-
-/* Στυλ για την εμφάνιση των εικόνων */
-.meals {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 21px;
-  justify-content: center;
-  width: 90%;
-  margin: auto;
-  margin-top: 44px;
-}
-
-.meals img {
-  width: 100%;
-  height: 270px;
-  border-top-left-radius: 11px;
-  border-top-right-radius: 11px;
-}
-
-.mealImg {
-  background-color: orange;
-  color: white;
-  font-size: 17px;
-  font-weight: bold;
-  border: none;
-  border-radius: 21px;
-  padding: 7px;
-  cursor: pointer;
-}
-
-.mealImg p {
-  font-weight: 600;
-}
-
-.mealImg button {
-  width: 120px;
-  background-color: orange;
-  color: white;
-  font-size: 17px;
-  border: none;
-  border-radius: 21px;
-  padding: 7px;
-  cursor: pointer;
-}
-
-/* Στυλ για τη σελίδα meal info */
-.mealInfo img {
-  width: 400px;
-  height: 400px;
-  border-radius: 11px;
-}
-
+/* Άλλα στοιχεία */
 .mealInfo {
   padding: 20px;
   max-width: 900px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
+
+  .recipe-name {
+    background-color: #f4a100;
+    color: white;
+    padding: 8px 16px;
+    font-size: 15px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background-color 0.3s ease;
+    width: fit-content;
+  }
+  
+}
+
+.mealInfo img {
+  width: 400px;
+  height: 400px;
+  border-radius: 11px;
 }
 
 .mealInfo button {
@@ -127,7 +159,6 @@ body {
   margin-top: -112px;
 }
 
-/* Στυλ για τη grid εμφάνιση εικόνας */
 .grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -136,10 +167,35 @@ body {
 }
 
 .image-card {
-  background-color: #f8f8f8;
+  background-color: #efefef;
+  outline-offset: 29px;
   padding: 10px;
   border-radius: 10px;
   text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  a {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .meal-title {
+    color: black;
+    font-weight: 500;
+  }
+
+  .recipe-button {
+    border: 1px solid orange;
+    padding: 5px 10px;
+    background-color: orange;
+    color: white;
+    width: fit-content;
+    border-radius: 15px;
+    font-weight: 500;
+  }
 }
 
 .image-card img {
@@ -152,26 +208,10 @@ body {
   transform: scale(1.05);
 }
 
-/* Στυλ για το μήνυμα (msg) */
 .msg {
   text-align: center;
 }
 
 .head {
   text-align: center;
-}
-.recipe-btn {
-  background-color: #ff6600;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
-}
-
-.recipe-btn:hover {
-  background-color: #e65100;
 }

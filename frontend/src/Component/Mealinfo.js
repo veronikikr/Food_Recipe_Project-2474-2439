@@ -19,8 +19,8 @@ const Mealinfo = () => {
   }, [mealid]);
 
   return (
-    <div className="meal-detail">
-      <Link to="/" className="home-button">
+    <div>
+      <Link to="/" className="home-button2">
         ← Home
       </Link>
 
@@ -29,11 +29,15 @@ const Mealinfo = () => {
       ) : (
         <div className="mealInfo">
           <img src={info.strMealThumb} alt={info.strMeal} />
-          <div className="info">
-            <h1>Recipe Detail</h1>
-            <button>{info.strMeal}</button>
+          <div>
+            <h1>Recipe Details</h1>
+            <p className="recipe-name">{info.strMeal}</p>
             <h3>Instructions</h3>
-            <p>{info.strInstructions}</p>
+            <p
+              dangerouslySetInnerHTML={{
+                __html: info.strInstructions.replace(/STEP/g, "<br><br>STEP"),
+              }}
+            />
           </div>
         </div>
       )}

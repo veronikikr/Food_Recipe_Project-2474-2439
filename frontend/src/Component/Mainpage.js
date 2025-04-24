@@ -32,18 +32,31 @@ const MainPage = () => {
 
   const fetchRandomMeals = async () => {
     const letters = "abcdefghijklmnopqrstuvwxyz";
-    const randomLetter = letters[Math.floor(Math.random() * letters.length)];
-    const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/search.php?f=${randomLetter}`
-    );
-    const data = await res.json();
-    if (data.meals) {
-      const shuffled = data.meals.sort(() => 0.5 - Math.random());
-      setRandomMeals(shuffled.slice(0, 12));
+    let allMeals = [];
+
+    while (allMeals.length < 12) {
+      const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+      const res = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?f=${randomLetter}`
+      );
+      const data = await res.json();
+
+      if (data.meals) {
+        // Φιλτράρεις όσα δεν υπάρχουν ήδη (προαιρετικά για να μην έχεις διπλά)
+        const newMeals = data.meals.filter(
+          (meal) => !allMeals.find((m) => m.idMeal === meal.idMeal)
+        );
+        allMeals = [...allMeals, ...newMeals];
+      }
+
+      // Για αποφυγή ατελείωτου loop αν έχεις πρόβλημα με το API
+      if (allMeals.length > 50) break;
     }
+
+    const shuffled = allMeals.sort(() => 0.5 - Math.random());
+    setRandomMeals(shuffled.slice(0, 12)); // ή 12 αν θέλεις
   };
 
-  // ✅ Αυτό καθαρίζει τα πάντα όταν πατάς Home
   const handleReset = () => {
     setSearch("");
     setResults([]);
@@ -67,10 +80,15 @@ const MainPage = () => {
           placeholder="Enter Dish"
           value={search}
           onChange={handleInput}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <button onClick={handleSearch}>Search</button>
 
-        {/* ✅ Εμφανίζεται μόνο όταν υπάρχουν αποτελέσματα */}
+        {/*Εμφανίζεται μόνο όταν υπάρχουν αποτελέσματα */}
         {results.length > 0 && (
           <button className="home-button" onClick={handleReset}>
             Home
@@ -86,6 +104,8 @@ const MainPage = () => {
             {results.length > 0 ? (
               <a href={`/meal/${meal.idMeal}`}>
                 <img src={meal.strMealThumb} alt={meal.strMeal} />
+                <p className="meal-title">{meal.strMeal}</p>
+                <span className="recipe-button">Recipe</span>
               </a>
             ) : (
               <img src={meal.strMealThumb} alt={meal.strMeal} />
