@@ -23,13 +23,12 @@ const Mealinfo = () => {
       <Link to="/" className="home-button2">
         ← Home
       </Link>
-
       {!info ? (
         <p>Data Not Found</p>
       ) : (
         <div className="mealInfo">
           <img src={info.strMealThumb} alt={info.strMeal} />
-          <div>
+          <span>
             <h1>Recipe Details</h1>
             <p className="recipe-name">{info.strMeal}</p>
             <h3>Instructions</h3>
@@ -38,7 +37,7 @@ const Mealinfo = () => {
                 __html: info.strInstructions.replace(/STEP/g, "<br><br>STEP"),
               }}
             />
-          </div>
+          </span>
         </div>
       )}
     </div>
