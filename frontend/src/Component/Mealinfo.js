@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "../index.css";
 
 const Mealinfo = () => {
   const { mealid } = useParams();
   const [info, setInfo] = useState(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromSearch = location.state?.fromSearch;
 
   useEffect(() => {
     const getInfo = async () => {
@@ -20,9 +24,23 @@ const Mealinfo = () => {
 
   return (
     <div>
-      <Link to="/" className="home-button2">
+      <button className="home-button2" onClick={() => navigate("/")}>
         ← Home
-      </Link>
+      </button>
+
+      <button
+        className="back-button"
+        onClick={() => {
+          if (fromSearch) {
+            navigate("/", { state: { scrollToResults: true } });
+          } else {
+            navigate(-1);
+          }
+        }}
+      >
+        ← Back
+      </button>
+
       {!info ? (
         <p>Data Not Found</p>
       ) : (

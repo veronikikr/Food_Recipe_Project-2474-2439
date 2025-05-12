@@ -16,6 +16,15 @@ body {
   margin-top: 22px;
 }
 
+@media (max-width: 600px) {
+  .searchBar {
+    width: 90%; /* shrink width on small screens */
+    max-width: 90%; /* keep it nice and compact */
+    margin-top: 15px;
+    gap: 10px;
+  }
+}
+
 .searchBar input {
   width: 400px;
   padding: 9px;
@@ -25,6 +34,14 @@ body {
   border-radius: 6px;
 }
 
+@media (max-width: 600px) {
+  .searchBar input {
+    width: 100%;
+    font-size: 18px;
+  }
+}
+
+.container{
 .searchBar {
   button {
     width: 90px;
@@ -38,7 +55,7 @@ body {
   }
 
   .home-button {
-    background-color: #0077cc;
+    background-color: #0077cc ; 
     color: white;
     padding: 10px 20px;
     font-size: 18px;
@@ -47,10 +64,24 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    text-decoration:double;
   }
   
-}
+}}
 
+
+@media (max-width: 600px) {
+  .searchBar button {
+    width: 70px;
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .searchBar .home-button {
+    padding: 8px 16px;
+    font-size: 16px;
+  }
+}
 
 
 /* Meals Container (κάθε κάρτα είναι εδώ μέσα) */
@@ -95,36 +126,14 @@ body {
 }
 
 /* Κουμπί "Recipe" */
-.recipe-btn {
-  background-color: #f4a100;
-  color: white;
-  padding: 8px 16px;
-  font-size: 15px;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: background-color 0.3s ease;
-}
 
-.home-button2 {
-  background-color: #0077cc;
-  color: white;
-  padding: 10px 20px;
-  font-size: 18px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 20px;
-}
 
 /* Άλλα στοιχεία */
 .mealInfo {
   padding: 140px;
-  height:100vh;
+  min-height:100vh;
   max-width:max-content;
-  margin-top:-25px;
+  margin-top:-60px;
   font-family:pxrial, sans-serif;
   background-color: #feba4f;
   display: flex;
@@ -142,7 +151,16 @@ body {
     transition: background-color 0.3s ease;
     width: fit-content;
   }
-  
+}
+@media (max-width: 600px) {
+  .mealInfo {
+    padding: 30px 20px;
+  }
+
+  .mealInfo .recipe-name {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
 }
 
 .mealInfo img {
@@ -157,7 +175,7 @@ body {
     .mealInfo img{
       width: 100px;
       height: 100px;
-
+      margin-top: 20px;
     }
   }
 
@@ -181,6 +199,19 @@ body {
   margin-top: 20px;
 }
 
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .grid {
+      grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+
 .image-card {
   background-color: #efefef;
   outline-offset: 29px;
@@ -196,21 +227,39 @@ body {
     flex-direction: column;
     align-items: center;
   }
+  
 
   .meal-title {
     color: black;
     font-weight: 500;
   }
 
+  .recipe-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; /* Απόσταση ανάμεσα στο κουμπί και την καρδιά */
+  }
+  
   .recipe-button {
-    border: 1px solid orange;
-    padding: 5px 10px;
     background-color: orange;
     color: white;
-    width: fit-content;
-    border-radius: 15px;
-    font-weight: 500;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 17px; /* Μεγαλύτερη γραμματοσειρά */
+    font-weight: bold;
   }
+  
+  .favorite-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 20px; /* Μέγεθος καρδιάς */
+    display: flex;
+    align-items: center;
+  }  
 }
 
 .image-card img {
@@ -223,8 +272,151 @@ body {
   transform: scale(1.05);
 }
 
+
+.back-button{
+  background-color: #0077cc;
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    text-decoration:double;
+}
 .msg {
   text-align: center;
+}
+
+.home-button2{
+  background-color: #0077cc ; 
+    color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    margin-right: 20px;
+    text-decoration:double;
+}
+.heart-icon-search{
+  font-size: xx-large;
+}
+
+/* Στυλ για το κουμπί Login */
+.login-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ff8000; /* Πορτοκαλί χρώμα */
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  text-decoration: double;
+}
+
+/* Στυλ για το Modal (φόρμα σύνδεσης) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: #ffcc99; /* Ανοιχτό πορτοκαλί χρώμα */
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.modal h2 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+button[type="submit"] {
+  background-color: #ff8000; /* Πορτοκαλί χρώμα */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #e67100; /* Σκούρο πορτοκαλί */
+}
+
+button[type="button"] {
+  background-color: #ccc;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+button[type="button"]:hover {
+  background-color: #999;
+}
+
+.register-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.register-link button {
+  background-color: transparent;
+  color: #ff8000;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.register-link button:hover {
+  color: #e67100;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 14px;
 }
 
 .head {
