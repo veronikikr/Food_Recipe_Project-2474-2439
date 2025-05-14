@@ -1,4 +1,3 @@
-// MainPage.js
 import React, { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
@@ -26,6 +25,11 @@ const MainPage = () => {
   const [regUsername, setRegUsername] = useState("");
   const [regPassword, setRegPassword] = useState("");
 
+  // Παιχνιδοποίηση
+  const [points, setPoints] = useState(0);
+  const [level, setLevel] = useState("Newbie");
+  const [badges, setBadges] = useState([]);
+
   useEffect(() => {
     const savedFavorites = sessionStorage.getItem("favorites");
     if (savedFavorites) {
@@ -44,12 +48,32 @@ const MainPage = () => {
     if (location.state?.scrollToResults) {
       setTimeout(() => {
         const grid = document.querySelector(".grid");
-        if (grid) {
-          grid.scrollIntoView({ behavior: "smooth" });
-        }
+        if (grid) grid.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   }, [location]);
+
+  useEffect(() => {
+    fetchRandomMeals();
+  }, []);
+
+  useEffect(() => {
+    const savedResults = sessionStorage.getItem("searchResults");
+    const savedQuery = sessionStorage.getItem("searchQuery");
+    if (savedResults && savedQuery) {
+      setResults(JSON.parse(savedResults));
+      setSearch(savedQuery);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (loginSuccess) {
+      const timer = setTimeout(() => {
+        setLoginSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [loginSuccess]);
 
   const handleInput = (e) => setSearch(e.target.value);
 
@@ -87,14 +111,12 @@ const MainPage = () => {
         `https://www.themealdb.com/api/json/v1/1/search.php?f=${randomLetter}`
       );
       const data = await res.json();
-
       if (data.meals) {
         const newMeals = data.meals.filter(
           (meal) => !allMeals.find((m) => m.idMeal === meal.idMeal)
         );
         allMeals = [...allMeals, ...newMeals];
       }
-
       if (allMeals.length > 50) break;
     }
 
@@ -102,9 +124,37 @@ const MainPage = () => {
     setRandomMeals(shuffled.slice(0, 12));
   };
 
+  const calculateLevel = (pts) => {
+    if (pts >= 200) return "Master Chef";
+    if (pts >= 100) return "Chef Apprentice";
+    if (pts >= 50) return "Explorer";
+    return "Newbie";
+  };
+
+  const updateBadges = (pts) => {
+    const earned = [];
+    if (pts >= 10) earned.push("🔰 First 10 points");
+    if (pts >= 50) earned.push("🍳 Cooking Enthusiast");
+    if (pts >= 100) earned.push("🥘 Meal Master");
+    if (pts >= 200) earned.push("🏆 Legend");
+    setBadges(earned);
+  };
+
+  const addPoints = (amount) => {
+    setPoints((prev) => {
+      const newPoints = prev + amount;
+      setLevel(calculateLevel(newPoints));
+      updateBadges(newPoints);
+
+      // 👉 TODO: Στείλε τους νέους πόντους στο backend εδώ όταν φτιαχτεί
+      // await fetch('/api/updatePoints', { method: 'POST', body: JSON.stringify({ user: loggedInUser, points: newPoints }) });
+
+      return newPoints;
+    });
+  };
+
   const toggleFavorite = (meal) => {
     if (!meal || !meal.idMeal) return;
-
     const exists = favorites.some((fav) => fav.idMeal === meal.idMeal);
     let updatedFavorites;
 
@@ -112,6 +162,7 @@ const MainPage = () => {
       updatedFavorites = favorites.filter((fav) => fav.idMeal !== meal.idMeal);
     } else {
       updatedFavorites = [...favorites, meal];
+      addPoints(5); // 🎯 δώσε πόντους μόνο όταν προσθέτει αγαπημένο
     }
 
     setFavorites(updatedFavorites);
@@ -128,32 +179,6 @@ const MainPage = () => {
   const handleShowFavorites = () => setShowFavorites(true);
   const handleBackHome = () => setShowFavorites(false);
 
-  useEffect(() => {
-    fetchRandomMeals();
-  }, []);
-
-  useEffect(() => {
-    if (loginSuccess) {
-      const timer = setTimeout(() => {
-        setLoginSuccess(false);
-      }, 3000); // εμφανίζεται για 3 δευτερόλεπτα
-
-      return () => clearTimeout(timer);
-    }
-  }, [loginSuccess]);
-
-  useEffect(() => {
-    const savedResults = sessionStorage.getItem("searchResults");
-    const savedQuery = sessionStorage.getItem("searchQuery");
-
-    if (savedResults && savedQuery) {
-      setResults(JSON.parse(savedResults));
-      setSearch(savedQuery);
-    }
-  }, []);
-
-  const mealsToShow = results.length > 0 ? results : randomMeals;
-
   const handleLoginClick = () => {
     setShowLoginModal(true);
     setLoginError(false);
@@ -169,7 +194,6 @@ const MainPage = () => {
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     const savedUser = JSON.parse(localStorage.getItem("registeredUser"));
-
     if (
       !savedUser ||
       savedUser.username !== username ||
@@ -187,37 +211,34 @@ const MainPage = () => {
     setShowLoginModal(false);
     setUsername("");
     setPassword("");
+
+    setPoints(10); // 🎁 Αρχικοί πόντοι
+    setLevel(calculateLevel(10));
+    updateBadges(10);
   };
 
   const handleLogout = () => {
     setLoggedInUser(null);
     sessionStorage.removeItem("loggedInUser");
+    setPoints(0);
+    setLevel("Newbie");
+    setBadges([]);
   };
 
-  const handleRegisterClick = () => {
-    setShowRegister(true);
-  };
-
-  const handleCloseRegister = () => {
-    setShowRegister(false);
-  };
+  const handleRegisterClick = () => setShowRegister(true);
+  const handleCloseRegister = () => setShowRegister(false);
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-
-    const newUser = {
-      email,
-      username: regUsername,
-      password: regPassword,
-    };
-
+    const newUser = { email, username: regUsername, password: regPassword };
     localStorage.setItem("registeredUser", JSON.stringify(newUser));
-
     setShowRegister(false);
     setEmail("");
     setRegUsername("");
     setRegPassword("");
   };
+
+  const mealsToShow = results.length > 0 ? results : randomMeals;
 
   if (showFavorites) {
     return (
@@ -238,14 +259,29 @@ const MainPage = () => {
       )}
 
       {loggedInUser ? (
-        <div className="user-bar">
-          <span className="user-greeting">
-            Welcome, <span className="username">{loggedInUser}</span>
-          </span>
-          <button className="logout-button" onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
+        <>
+          <div className="user-bar">
+            <span className="user-greeting">
+              Welcome, <span className="username">{loggedInUser}</span>
+            </span>
+            <span className="user-level"> | Level: {level}</span>
+            <span className="user-points"> | Points: {points}</span>
+            <button className="logout-button" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+
+          {badges.length > 0 && (
+            <div className="badges-container">
+              <strong>Badges:</strong>{" "}
+              {badges.map((badge, idx) => (
+                <span key={idx} className="badge">
+                  {badge}
+                </span>
+              ))}
+            </div>
+          )}
+        </>
       ) : (
         <button onClick={handleLoginClick} className="login-button">
           Login
@@ -278,21 +314,14 @@ const MainPage = () => {
                   required
                 />
               </div>
-
               {loginError && (
                 <p className="error-message">Incorrect username or password.</p>
               )}
-
-              {loginSuccess && (
-                <p className="login-success-message">Login successful!</p>
-              )}
-
               <button type="submit">Login</button>
               <button type="button" onClick={handleCloseLoginModal}>
                 Close
               </button>
             </form>
-
             <div className="register-link">
               <span>Not an account yet?</span>{" "}
               <button onClick={handleRegisterClick}>Register</button>
@@ -358,14 +387,9 @@ const MainPage = () => {
           placeholder="Enter Dish"
           value={search}
           onChange={handleInput}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleSearch();
-            }
-          }}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
         />
         <button onClick={handleSearch}>Search</button>
-
         {results.length > 0 && (
           <button className="home-button" onClick={handleReset}>
             Home
