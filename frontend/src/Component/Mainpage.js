@@ -1,3 +1,4 @@
+// MainPage.js
 import React, { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
@@ -17,6 +18,8 @@ const MainPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const [showRegister, setShowRegister] = useState(false);
   const [email, setEmail] = useState("");
@@ -28,6 +31,9 @@ const MainPage = () => {
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
     }
+
+    const user = sessionStorage.getItem("loggedInUser");
+    if (user) setLoggedInUser(user);
   }, []);
 
   useEffect(() => {
@@ -52,19 +58,23 @@ const MainPage = () => {
       setMsg("Please enter a dish name.");
       return;
     }
-    const res = await fetch(
-      `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`
-    );
-    const data = await res.json();
-    if (data.meals) {
-      setResults(data.meals);
-      setMsg("");
-    } else {
-      setResults([]);
-      setMsg("No recipes found.");
+    try {
+      const res = await fetch(
+        `https://www.themealdb.com/api/json/v1/1/search.php?s=${search}`
+      );
+      const data = await res.json();
+      if (data.meals) {
+        setResults(data.meals);
+        setMsg("");
+      } else {
+        setResults([]);
+        setMsg("No recipes found.");
+      }
+      sessionStorage.setItem("searchResults", JSON.stringify(data.meals));
+      sessionStorage.setItem("searchQuery", search);
+    } catch (error) {
+      setMsg("An error occurred. Please try again.");
     }
-    sessionStorage.setItem("searchResults", JSON.stringify(data.meals));
-    sessionStorage.setItem("searchQuery", search);
   };
 
   const fetchRandomMeals = async () => {
@@ -93,12 +103,18 @@ const MainPage = () => {
   };
 
   const toggleFavorite = (meal) => {
-    const isFav = favorites.some((fav) => fav.idMeal === meal.idMeal);
-    if (isFav) {
-      setFavorites(favorites.filter((fav) => fav.idMeal !== meal.idMeal));
+    if (!meal || !meal.idMeal) return;
+
+    const exists = favorites.some((fav) => fav.idMeal === meal.idMeal);
+    let updatedFavorites;
+
+    if (exists) {
+      updatedFavorites = favorites.filter((fav) => fav.idMeal !== meal.idMeal);
     } else {
-      setFavorites([...favorites, meal]);
+      updatedFavorites = [...favorites, meal];
     }
+
+    setFavorites(updatedFavorites);
   };
 
   const handleReset = () => {
@@ -115,6 +131,16 @@ const MainPage = () => {
   useEffect(() => {
     fetchRandomMeals();
   }, []);
+
+  useEffect(() => {
+    if (loginSuccess) {
+      const timer = setTimeout(() => {
+        setLoginSuccess(false);
+      }, 3000); // εμφανίζεται για 3 δευτερόλεπτα
+
+      return () => clearTimeout(timer);
+    }
+  }, [loginSuccess]);
 
   useEffect(() => {
     const savedResults = sessionStorage.getItem("searchResults");
@@ -142,16 +168,30 @@ const MainPage = () => {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    const fakeUsername = "demo";
-    const fakePassword = "1234";
-    if (username !== fakeUsername || password !== fakePassword) {
+    const savedUser = JSON.parse(localStorage.getItem("registeredUser"));
+
+    if (
+      !savedUser ||
+      savedUser.username !== username ||
+      savedUser.password !== password
+    ) {
       setLoginError(true);
+      setLoginSuccess(false);
       return;
     }
+
     setLoginError(false);
+    setLoginSuccess(true);
+    setLoggedInUser(savedUser.username);
+    sessionStorage.setItem("loggedInUser", savedUser.username);
     setShowLoginModal(false);
     setUsername("");
     setPassword("");
+  };
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
+    sessionStorage.removeItem("loggedInUser");
   };
 
   const handleRegisterClick = () => {
@@ -160,14 +200,19 @@ const MainPage = () => {
 
   const handleCloseRegister = () => {
     setShowRegister(false);
-    setEmail("");
-    setRegUsername("");
-    setRegPassword("");
   };
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    console.log("Registration data:", { email, regUsername, regPassword });
+
+    const newUser = {
+      email,
+      username: regUsername,
+      password: regPassword,
+    };
+
+    localStorage.setItem("registeredUser", JSON.stringify(newUser));
+
     setShowRegister(false);
     setEmail("");
     setRegUsername("");
@@ -177,7 +222,7 @@ const MainPage = () => {
   if (showFavorites) {
     return (
       <Favorites
-        favorites={favorites}
+        favorites={Array.from(favorites)}
         toggleFavorite={toggleFavorite}
         onBack={handleBackHome}
       />
@@ -188,9 +233,24 @@ const MainPage = () => {
     <div className="container">
       <h1 className="head">Tasty</h1>
 
-      <button onClick={handleLoginClick} className="login-button">
-        Login
-      </button>
+      {loginSuccess && (
+        <div className="login-success-banner">✅ Login successful!</div>
+      )}
+
+      {loggedInUser ? (
+        <div className="user-bar">
+          <span className="user-greeting">
+            Welcome, <span className="username">{loggedInUser}</span>
+          </span>
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
+      ) : (
+        <button onClick={handleLoginClick} className="login-button">
+          Login
+        </button>
+      )}
 
       {/* Login Modal */}
       {showLoginModal && (
@@ -218,14 +278,21 @@ const MainPage = () => {
                   required
                 />
               </div>
+
               {loginError && (
                 <p className="error-message">Incorrect username or password.</p>
               )}
+
+              {loginSuccess && (
+                <p className="login-success-message">Login successful!</p>
+              )}
+
               <button type="submit">Login</button>
               <button type="button" onClick={handleCloseLoginModal}>
                 Close
               </button>
             </form>
+
             <div className="register-link">
               <span>Not an account yet?</span>{" "}
               <button onClick={handleRegisterClick}>Register</button>
@@ -310,7 +377,9 @@ const MainPage = () => {
 
       <div className="grid">
         {mealsToShow.map((meal) => {
+          if (!meal || !meal.idMeal) return null;
           const isFav = favorites.some((fav) => fav.idMeal === meal.idMeal);
+
           return (
             <div key={meal.idMeal} className="image-card">
               <img src={meal.strMealThumb} alt={meal.strMeal} />
