@@ -337,6 +337,7 @@ body {
 .form-group {
   margin-bottom: 18px;
   text-align: left;
+  padding-left: 10px;
 }
 
 .form-group label {
@@ -346,12 +347,14 @@ body {
 }
 
 .form-group input {
-  width: 100%;
+  width: 95%;
   padding: 10px 12px;
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  margin-left:-10px; /* <-- προσθέτει μικρή μετατόπιση */
 }
+
 
 .modal button[type="submit"],
 .modal button[type="button"] {
@@ -462,14 +465,27 @@ body {
   color: #0077cc;
 }
 
+.user-info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+  font-weight:500;
+}
+
 .logout-button {
-  background-color: #ff4444;
+  background-color: #f44336;
   color: white;
   border: none;
-  padding: 5px 10px;
-  font-size: 14px;
-  border-radius: 4px;
+  padding: 6px 16px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+   font-size: 16px;
 }
 
 .logout-button:hover {
@@ -486,16 +502,18 @@ body {
   font-weight: bold;
   box-shadow: 0 0 8px rgba(0, 128, 0, 0.2);
 }
-.badges-container {
-  margin: 10px 0;
-  font-size: 14px;
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .badge {
-  display: inline-block;
-  background-color: #f0c040;
-  border-radius: 10px;
+  background-color: gold;
+  color: black;
   padding: 4px 8px;
-  margin: 0 5px;
+  border-radius: 12px;
   font-weight: bold;
+  white-space: nowrap;
+  font-size: 16px;
 }

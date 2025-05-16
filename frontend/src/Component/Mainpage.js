@@ -146,8 +146,12 @@ const MainPage = () => {
       setLevel(calculateLevel(newPoints));
       updateBadges(newPoints);
 
-      // 👉 TODO: Στείλε τους νέους πόντους στο backend εδώ όταν φτιαχτεί
-      // await fetch('/api/updatePoints', { method: 'POST', body: JSON.stringify({ user: loggedInUser, points: newPoints }) });
+      // 🔽 Ενημέρωση χρήστη με νέους πόντους στο localStorage
+      const user = JSON.parse(localStorage.getItem("registeredUser"));
+      if (user && user.username === loggedInUser) {
+        user.points = newPoints;
+        localStorage.setItem("registeredUser", JSON.stringify(user));
+      }
 
       return newPoints;
     });
@@ -212,9 +216,11 @@ const MainPage = () => {
     setUsername("");
     setPassword("");
 
-    setPoints(10); // 🎁 Αρχικοί πόντοι
-    setLevel(calculateLevel(10));
-    updateBadges(10);
+    // 🔽 Ανάκτηση πόντων αν υπάρχουν
+    const userPoints = savedUser.points || 0;
+    setPoints(userPoints);
+    setLevel(calculateLevel(userPoints));
+    updateBadges(userPoints);
   };
 
   const handleLogout = () => {
@@ -230,7 +236,12 @@ const MainPage = () => {
 
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    const newUser = { email, username: regUsername, password: regPassword };
+    const newUser = {
+      email,
+      username: regUsername,
+      password: regPassword,
+      points: 0, // 🔽 Αρχικοί πόντοι νέου χρήστη
+    };
     localStorage.setItem("registeredUser", JSON.stringify(newUser));
     setShowRegister(false);
     setEmail("");
@@ -259,21 +270,16 @@ const MainPage = () => {
       )}
 
       {loggedInUser ? (
-        <>
-          <div className="user-bar">
-            <span className="user-greeting">
-              Welcome, <span className="username">{loggedInUser}</span>
-            </span>
-            <span className="user-level"> | Level: {level}</span>
-            <span className="user-points"> | Points: {points}</span>
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-
+        <div className="user-info-bar">
+          <span>
+            Welcome, <strong>{loggedInUser}</strong> | Level: {level} | Points:{" "}
+            {points}
+          </span>
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
+          </button>
           {badges.length > 0 && (
-            <div className="badges-container">
-              <strong>Badges:</strong>{" "}
+            <div className="badges">
               {badges.map((badge, idx) => (
                 <span key={idx} className="badge">
                   {badge}
@@ -281,7 +287,7 @@ const MainPage = () => {
               ))}
             </div>
           )}
-        </>
+        </div>
       ) : (
         <button onClick={handleLoginClick} className="login-button">
           Login
