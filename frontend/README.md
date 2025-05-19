@@ -1,4 +1,4 @@
-# 🍽️ React Meal App
+# 🍽️ Tasty
 
 A modern and responsive web application built with React that allows users to search for meals, view detailed recipes, and save their favorite dishes using TheMealDB API.
 
