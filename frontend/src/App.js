@@ -4,7 +4,7 @@ import "./App.css";
 import "./index.css";
 import { Route, Routes } from "react-router-dom";
 import Mealinfo from "./Component/Mealinfo";
-\
+
 
 function App() {
   return (
