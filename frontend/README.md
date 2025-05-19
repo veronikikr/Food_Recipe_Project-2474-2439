@@ -31,9 +31,7 @@ src/
 │ ├── Mealinfo.js
 │ ├── Favorites.js
 
-bash
-Αντιγραφή
-Επεξεργασία
+
 
 ## 📦 Installation
 
