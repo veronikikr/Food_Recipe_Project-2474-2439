@@ -1,9 +1,9 @@
 import React from "react";
-import Mainpage from "./Component/Mainpage";
+import Mainpage from "./Components/Mainpage";
 import "./App.css";
 import "./index.css";
 import { Route, Routes } from "react-router-dom";
-import Mealinfo from "./Component/Mealinfo";
+import Mealinfo from "./Components/Mealinfo";
 
 
 function App() {
